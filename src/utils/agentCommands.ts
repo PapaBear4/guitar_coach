@@ -75,7 +75,7 @@ export function parseAgentCommand(text: string): AgentAction {
   }
 
   // 5. Change Capo (e.g., "set capo to 3", "put capo on fret 2")
-  const capoMatch = t.match(/(?:set|put|change)\s+capo\s+(?:at|on|to\s+)?(?:fret\s+)?(\d+)/i);
+  const capoMatch = t.match(/(?:set|put|change)\s+capo\s+(?:at|on|to)?\s*(?:fret\s+)?(\d+)/i);
   if (capoMatch) {
     const fret = parseInt(capoMatch[1], 10);
     return {
