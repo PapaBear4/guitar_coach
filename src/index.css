@@ -115,11 +115,19 @@ body {
 .col-span-2 { grid-column: span 2 / span 2; }
 .col-span-4 { grid-column: span 4 / span 4; }
 
+.hidden { display: none; }
+
 @media (min-width: 640px) {
   .sm\:flex-row { flex-direction: row; }
   .sm\:w-96 { width: 24rem; }
   .sm\:w-auto { width: auto; }
   .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sm\:pb-0 { padding-bottom: 0; }
+}
+
+@media (min-width: 768px) {
+  .md\:flex { display: flex; }
+  .md\:hidden { display: none; }
 }
 
 @media (min-width: 1024px) {
@@ -182,6 +190,7 @@ body {
 .pt-3 { padding-top: 0.75rem; }
 .pb-1 { padding-bottom: 0.25rem; }
 .pb-6 { padding-bottom: 1.5rem; }
+.pb-20 { padding-bottom: 5rem; }
 .m-0 { margin: 0; }
 .mt-1 { margin-top: 0.25rem; }
 .mt-2 { margin-top: 0.5rem; }
