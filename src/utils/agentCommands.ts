@@ -10,6 +10,7 @@ export interface AgentAction {
     | 'set_tuning'
     | 'log_note'
     | 'suggest_capo'
+    | 'stretch_vocals'
     | 'unknown';
   args: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   message: string;
@@ -141,9 +142,19 @@ export function parseAgentCommand(text: string): AgentAction {
     };
   }
 
+  // 11. Stretch Vocals (e.g., "stretch my vocals", "stretch range", "push limits")
+  const stretchMatch = t.match(/(?:stretch|push)\s+(?:my\s+)?(?:vocals|range|limits?|voice)/i);
+  if (stretchMatch) {
+    return {
+      type: 'stretch_vocals',
+      args: {},
+      message: 'Calculating key transitions to stretch your vocal abilities...'
+    };
+  }
+
   return {
     type: 'unknown',
     args: {},
-    message: "I didn't quite catch that. Try saying something like:\n• 'transpose up 2'\n• 'set capo to 3'\n• 'change tuning to baritone'\n• 'create setlist Sunday Set'\n• 'add note practice chorus vocals'\n• 'suggest capo'"
+    message: "I didn't quite catch that. Try saying something like:\n• 'transpose up 2'\n• 'set capo to 3'\n• 'change tuning to baritone'\n• 'create setlist Sunday Set'\n• 'add note practice chorus vocals'\n• 'suggest capo'\n• 'stretch vocals'"
   };
 }

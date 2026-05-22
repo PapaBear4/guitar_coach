@@ -652,6 +652,20 @@ Get you on your [Em]feet a[Bm]gain.`
             executedType = 'unknown';
           }
         }
+        else if (action.type === 'stretch_vocals') {
+          if (activeSongId && activeSong) {
+            const songMin = activeSong.vocalMin || 'D3';
+            const songMax = activeSong.vocalMax || 'E4';
+            feedback = `Your current recorded vocal limits are: Low [${vocalRange.min}], High [${vocalRange.max}].\n`;
+            feedback += `For "${activeSong.title}" (Song vocal limits: ${songMin} to ${songMax}):\n\n`;
+            feedback += `• **To stretch your high range**: Try transposing UP by 1 semitone (current transpose offset: ${activeSong.transposeOffset}). This will shift the song's peak notes higher to stretch your head voice/mix.\n`;
+            feedback += `• **To stretch your low range**: Try transposing DOWN by 1 semitone. This will shift the low notes lower to stretch your low chest voice.\n\n`;
+            feedback += `Simply say "transpose up 1" or "transpose down 1" to shift the song key and start stretching!`;
+          } else {
+            feedback = "Load a song first so I can analyze its range and calculate vocal stretch transpositions for you.";
+            executedType = 'unknown';
+          }
+        }
         else if (action.type === 'filter_tuning') {
           setFilterTuning(action.args.tuning);
           feedback = `Filtered your library to show songs in "${action.args.tuning}" tuning.`;

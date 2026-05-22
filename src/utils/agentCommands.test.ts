@@ -126,6 +126,20 @@ describe('Deterministic NLP Command Parser', () => {
     });
   });
 
+  it('should parse stretch vocals commands', () => {
+    expect(parseAgentCommand('stretch my range')).toEqual({
+      type: 'stretch_vocals',
+      args: {},
+      message: 'Calculating key transitions to stretch your vocal abilities...'
+    });
+
+    expect(parseAgentCommand('push limits')).toEqual({
+      type: 'stretch_vocals',
+      args: {},
+      message: 'Calculating key transitions to stretch your vocal abilities...'
+    });
+  });
+
   it('should parse filter tuning commands', () => {
     expect(parseAgentCommand('show standard tuning')).toEqual({
       type: 'filter_tuning',
