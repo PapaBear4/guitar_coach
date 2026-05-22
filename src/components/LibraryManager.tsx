@@ -41,9 +41,10 @@ export const LibraryManager: React.FC<LibraryManagerProps> = ({ onEditSongCallba
     const logs = [
       { progress: 30, log: 'Connecting to Ultimate Guitar mobile gateway...' },
       { progress: 50, log: 'Logging in with credentials...' },
-      { progress: 75, log: 'Fetching song library and private playlists...' },
-      { progress: 90, log: 'Downloading song metadata and personal notes...' },
-      { progress: 100, log: 'Importing Comfortably Numb by Pink Floyd...' }
+      { progress: 70, log: 'Fetching song library and private playlists...' },
+      { progress: 85, log: 'Downloading song metadata and personal notes...' },
+      { progress: 95, log: 'Importing songs: Comfortably Numb, 10,000 Reasons, Knockin\' On Heaven\'s Door, How Great Is Our God...' },
+      { progress: 100, log: 'Sync completed! 4 songs synced from Ultimate Guitar.' }
     ];
 
     for (const step of logs) {
@@ -287,7 +288,7 @@ export const LibraryManager: React.FC<LibraryManagerProps> = ({ onEditSongCallba
                 </div>
                 <h4 className="text-sm font-bold text-slate-100">Sync Completed Successfully!</h4>
                 <p className="text-xs text-slate-500 max-w-xs">
-                  Your songs have been synced. Comfortably Numb has been added to your Library list.
+                  Your songs have been synced. Comfortably Numb, 10,000 Reasons, Knockin' On Heaven's Door, and How Great Is Our God have been added/updated in your Library.
                 </p>
                 <button
                   onClick={closeSyncModal}

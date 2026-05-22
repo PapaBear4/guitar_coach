@@ -488,25 +488,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const syncWithUltimateGuitarMock = async () => {
     return new Promise<void>((resolve) => {
-      // Simulate sync network call
+      // Simulate sync network call with multiple songs representing library sync
       setTimeout(() => {
-        // Prepend a mock sync song just to show it worked
-        const newSyncSong: Song = {
-          id: 'sync_' + Date.now().toString(),
-          title: 'Comfortably Numb',
-          artist: 'Pink Floyd',
-          key: 'D',
-          activeKey: 'D',
-          transposeOffset: 0,
-          tuning: 'standard',
-          capo: 0,
-          tempo: 127,
-          duration: 382,
-          genre: 'bar',
-          vocalMin: 'A2',
-          vocalMax: 'D4',
-          notes: ['Synced from Ultimate Guitar library.'],
-          chordSheet: `{title: Comfortably Numb}
+        const newSyncSongs: Song[] = [
+          {
+            id: 'sync_1_' + Date.now().toString(),
+            title: 'Comfortably Numb',
+            artist: 'Pink Floyd',
+            key: 'D',
+            activeKey: 'D',
+            transposeOffset: 0,
+            tuning: 'standard',
+            capo: 0,
+            tempo: 127,
+            duration: 382,
+            genre: 'bar',
+            vocalMin: 'A2',
+            vocalMax: 'D4',
+            notes: ['Synced from Ultimate Guitar library.'],
+            chordSheet: `{title: Comfortably Numb}
 {artist: Pink Floyd}
 {key: D}
 
@@ -516,11 +516,105 @@ Is there [Em]anyone at [Bm]home?
 [D]Come on now, I hear you're [A]feeling down
 Well, I can [G]ease your pain
 Get you on your [Em]feet a[Bm]gain.`
-        };
-        
+          },
+          {
+            id: 'sync_2_' + Date.now().toString(),
+            title: '10,000 Reasons (Bless the Lord)',
+            artist: 'Matt Redman',
+            key: 'G',
+            activeKey: 'G',
+            transposeOffset: 0,
+            tuning: 'standard',
+            capo: 0,
+            tempo: 72,
+            duration: 342,
+            genre: 'church',
+            vocalMin: 'D3',
+            vocalMax: 'G4',
+            notes: ['Church worship standard. Focus on clear transitions to D/F#.'],
+            chordSheet: `{title: 10,000 Reasons (Bless the Lord)}
+{artist: Matt Redman}
+{key: G}
+
+Chorus:
+Bless the [C]Lord, O my [G]soul, [D]O my [Em]soul
+[C]Worship His [G]holy [D]name
+Sing like [C]never be[Em]fore, [C]O [D]my [Em]soul
+I'll [C]worship His [D]holy [G]name.
+
+Verse 1:
+The [C]sun comes [G]up, it's a [D]new day [Em]dawning
+[C]It's time to [G]sing Your [D]song a[Em]gain
+What[C]ever may [G]pass, and what[D]ever lies be[Em]fore me
+[C]Let me be [G]singing when the [D]evening [G]comes.`
+          },
+          {
+            id: 'sync_3_' + Date.now().toString(),
+            title: "Knockin' On Heaven's Door",
+            artist: 'Bob Dylan',
+            key: 'G',
+            activeKey: 'G',
+            transposeOffset: 0,
+            tuning: 'standard',
+            capo: 0,
+            tempo: 70,
+            duration: 150,
+            genre: 'bar',
+            vocalMin: 'D3',
+            vocalMax: 'D4',
+            notes: ['Classic bar gig standard. Easy G - D - Am / G - D - C progression.'],
+            chordSheet: `{title: Knockin' On Heaven's Door}
+{artist: Bob Dylan}
+{key: G}
+
+Verse 1:
+[G]Mama, take this [D]badge off of [Am]me
+[G]I can't [D]use it any[C]more.
+[G]It's gettin' [D]dark, too dark for [Am]to see
+[G]I feel I'm [D]knockin' on heaven's [C]door.
+
+Chorus:
+[G]Knock, knock, [D]knockin' on heaven's [Am]door
+[G]Knock, knock, [D]knockin' on heaven's [C]door.`
+          },
+          {
+            id: 'sync_4_' + Date.now().toString(),
+            title: 'How Great Is Our God',
+            artist: 'Chris Tomlin',
+            key: 'G',
+            activeKey: 'G',
+            transposeOffset: 0,
+            tuning: 'standard',
+            capo: 0,
+            tempo: 78,
+            duration: 265,
+            genre: 'church',
+            vocalMin: 'C#3',
+            vocalMax: 'F#4',
+            notes: ['Great for congregational flow. Can transition directly to Amazing Grace.'],
+            chordSheet: `{title: How Great Is Our God}
+{artist: Chris Tomlin}
+{key: G}
+
+Verse 1:
+The [G]splendor of the King, [Em]clothed in majesty
+Let all the earth re[C]joice, all the earth rejoice
+He [G]wraps Himself in light, and [Em]darkness tries to hide
+And trembles at His [C]voice, trembles at His voice.
+
+Chorus:
+[G]How great is our God, [Em]sing with me
+How great is our God, and all will [C]see
+How [D]great, how [G]great is our God.`
+          }
+        ];
+
         setSongs(prev => {
-          if (prev.some(s => s.title === 'Comfortably Numb')) return prev;
-          return [...prev, newSyncSong];
+          // Filter out duplicates based on title
+          const newSongs = newSyncSongs.filter(
+            ns => !prev.some(s => s.title.toLowerCase() === ns.title.toLowerCase())
+          );
+          return [...prev, ...newSongs];
         });
         resolve();
       }, 2500);
