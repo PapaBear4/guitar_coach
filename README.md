@@ -71,3 +71,85 @@ export default defineConfig([
   },
 ])
 ```
+
+## Application Flow
+
+Phineas is built as a highly responsive, single-page client-side web application using React, TypeScript, and Vite. To keep LLM costs entirely manageable and performance instant, all pitch-tracking, transposition, capo calculations, and NLP commands are executed locally and deterministically.
+
+### Architecture & Data Flow
+
+```mermaid
+flowchart TD
+    subgraph UI ["User Interface (React Components)"]
+        Dashboard[DashboardView]
+        Library[LibraryManager]
+        Editor[ChordSheetEditor]
+        Setlist[SetlistManager]
+        Practice[Practice Split Screen]
+        Tuner[PitchVisualizer]
+        Viewer[ChordSheetViewer]
+        Agent[AICoachAgentPanel]
+    end
+
+    subgraph CoreState ["State Management (React Context)"]
+        Context[AppContext.tsx]
+        LS[(LocalStorage)]
+    end
+
+    subgraph Logic ["Deterministic Logic & Utilities"]
+        AudioEngine[audio.ts: Pitch Detection]
+        TransposeEngine[transposer.ts: ChordPro / Capo Calc]
+        CmdParser[agentCommands.ts: NLP Parser]
+    end
+
+    %% Input streams
+    Mic((Microphone)) --> AudioEngine
+    AudioEngine -->|Frequency, Notes, Cents| Tuner
+    Tuner -->|Log Vocal Range| Context
+
+    %% User Interaction Flow
+    Library -->|UG Sync Mock / CRUD| Context
+    Editor -->|Edit ChordPro / Text| Context
+    Setlist -->|Create & Sort Setlists / Vocalist Sheet| Context
+    Viewer -->|Transposed Chord Rendering / Scroll| Context
+    
+    %% AI Coach panel interactions
+    Agent -->|Text / Voice Command| CmdParser
+    CmdParser -->|Parsed Action & Message| Context
+    Context -->|Execute State Changes| Agent
+
+    %% Context syncing
+    Context <-->|Sync State| LS
+    Context -->|Current Song, Tuning, Capo, Setlist| UI
+    
+    %% Calculations
+    Context -->|Calculate pitch offsets| TransposeEngine
+    Context -->|Calculate capo recommendations| TransposeEngine
+```
+
+### Detailed Flow Explanation
+
+1. **Audio Input & Pitch Detection**:
+   * The **Microphone Input** is routed through a Web Audio API `AnalyserNode`.
+   * **`audio.ts`** reads the time-domain buffer and uses **Autocorrelation** to determine the pitch frequency (50 Hz to 2000 Hz).
+   * If the signal amplitude is above the root-mean-square threshold, it resolves the frequency to a MIDI note number, name, and cents deviation (-50 cents to +50 cents).
+   * **`PitchVisualizer.tsx`** displays the live tuner dial and records the user's vocal range limits (comfortable min/max pitch), writing it to the `AppContext`.
+
+2. **State & LocalStorage Sync**:
+   * **`AppContext.tsx`** stores the unified app state (active song, guitar tuning standard/Eb/baritone, capo fret, vocal range, custom setlists, library, and chat logs).
+   * Any mutation of the state is automatically persisted into the user's browser via **`localStorage`**, enabling offline practice.
+
+3. **Deterministic Command NLP Parsing**:
+   * The **`AICoachAgentPanel.tsx`** captures user commands (via text typing or Web Speech API recognition).
+   * Instead of sending requests to a costly external LLM, **`agentCommands.ts`** processes inputs locally using regular expression pattern matching.
+   * Actions like `transpose`, `set_capo`, `set_tuning`, `create_setlist`, and `stretch_vocals` are dispatched to `AppContext` which mutates state deterministically.
+
+4. **Chord Transposition & Capo Optimization**:
+   * **`transposer.ts`** handles parsing ChordPro metadata/bracket notations and standard text.
+   * Key transposition maps each chord symbol to its offset value. Slash chords (e.g. `C/E`) are parsed and both halves transposed correctly.
+   * Capo recommendations are calculated by mapping the target concert key against the guitar's tuning offset (Standard: 0, Eb: -1, Baritone: -5) and finding the capo fret (0 to 11) that maximizes the usage of easy open chords (`G`, `C`, `D`, `E`, `A`).
+
+5. **Setlist Compilation & Vocalist Print Sheets**:
+   * **`SetlistManager.tsx`** builds gig setlists, estimates duration, and toggles "Vocalist Mode".
+   * In Vocalist Mode, the layout strips all chord brackets and guitar-oriented symbols, showing only large, print-friendly lyrics.
+
